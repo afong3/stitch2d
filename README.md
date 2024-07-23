@@ -15,6 +15,8 @@ In addition to the instructions below, a guide and API reference are
 available in the
 [documentation](https://stitch2d.readthedocs.io/en/latest/).
 
+*** This is a forked repo of the original to allow for clean development and install of the if the changes are not accepted as a PR ***
+
 Install
 -------
 
