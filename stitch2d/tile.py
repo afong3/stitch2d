@@ -1264,8 +1264,9 @@ class MemmapTile:
 
         if path is None:
             path = 'large_matrix_{}_{}_{}.dat'.format(shape[0], shape[1], shape[2])
-
-        data = np.memmap(path, dtype='int8', mode='w+', shape=shape)
+            
+        shape_tuple = (shape[0], shape[1], shape[2])
+        data = np.memmap(path, dtype='int8', mode='w+', shape=shape_tuple)
 
         # Sort placeholders to front of list so they're drawn first. Tiles
         # with image data will then overwrite them where they overlap.
@@ -1280,7 +1281,7 @@ class MemmapTile:
 
         del data 
 
-        return 
+        return shape
 
     def save(self, path, others=None):
         """Saves an image created from the provided tiles
@@ -1747,8 +1748,12 @@ class MemmapOpenCVTile(MemmapTile):
         """
         return cv.cvtColor(self.imdata, cv.COLOR_BGR2GRAY)
 
-    def resize(self, size_or_shape, *args, **kwargs):
-        """Resizes image to a given size or shape
+    def write_dat(self, path):
+        """Write .dat file for the image data of the tile to use for memmaps"""
+        pass
+
+    def resize(self, size_or_shape, dat_path, *args, **kwargs):
+        """Resizes image to a given size or shape, then saves the data as the .dat 
 
         Parameters
         ----------
@@ -1770,7 +1775,10 @@ class MemmapOpenCVTile(MemmapTile):
         (height, width), scale = self._calc_resized(size_or_shape)
 
         if (height, width) != self.shape:
-            self.imdata = cv.resize(self.imdata, (width, height), *args, **kwargs)
+            array = np.array(self.imdata )
+            array_resized = cv.resize(array, (width, height), *args, **kwargs)
+
+
             self.scale = scale
             if self.placed:
                 self.x *= self.scale
@@ -1878,7 +1886,7 @@ class MemmapOpenCVTile(MemmapTile):
         return self
 
     @staticmethod
-    def backend_save(path, im):
+    def backend_save():
         """Saves image to path using OpenCV
 
         Parameters

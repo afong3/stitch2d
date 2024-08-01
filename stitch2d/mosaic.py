@@ -1000,6 +1000,10 @@ class MemmapMosaic:
         self._normalize_coordinates()
         return self._batch_tile_method("reset")
 
+    def write_dats(self):
+        """Write .dat files for the image data of the tiles"""
+        pass
+
     def resize(self, size_or_shape, *args, **kwargs):
         """Rescales all tiles in the mosaic using size or shape
 
@@ -1013,6 +1017,8 @@ class MemmapMosaic:
             any keyword argument accepted by the resize function used by the
             tile class
         """
+
+
         return self._batch_tile_method("resize", size_or_shape, *args, **kwargs)
 
     def downsample(self, size_or_shape, *args, **kwargs):
@@ -1182,7 +1188,7 @@ class MemmapMosaic:
 
         self._normalize_coordinates()
 
-        placed[0].draw_memmap(placed[1:], path)
+        shape = placed[0].draw_memmap(placed[1:], path)
 
         # Reset tile x and y to None if set above
         if reset_xy:
@@ -1192,9 +1198,9 @@ class MemmapMosaic:
 
         logger.info(f"Drew {self}")
 
-        return None
+        return shape
 
-    def save(self, path):
+    def save(self, path=None):
         """Saves mosaic to path
 
         Parameters
@@ -1202,7 +1208,8 @@ class MemmapMosaic:
         path : str
             file path
         """
-        self.tile_class.backend_save(path, self.stitch(path))
+        shape = self.stitch(path)
+        return shape
 
     def show(self, *args, **kwargs):
         """Shows the mosaic"""
